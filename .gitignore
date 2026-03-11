@@ -1,0 +1,37 @@
+# ================================
+# Data directories (no subir datos)
+# ================================
+data/
+raw_data/
+databases/
+results/
+tests/
+
+# ================================
+# Large biological data files
+# ================================
+*.fasta
+*.faa
+*.fna
+*.gz
+*.bam
+*.zip
+
+# ================================
+# CARD / RGI databases
+# ================================
+rgi_autoload_*
+localDB/
+
+# ================================
+# Intermediate files
+# ================================
+*.json
+*.csv
+
+# ================================
+# R session files
+# ================================
+.RData
+.Rhistory
+.Rproj.user
