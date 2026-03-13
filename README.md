@@ -24,18 +24,19 @@ Machine learning models are used to evaluate the predictive capacity of genomic 
 ## Pipeline Overview
 
 1. Retrieval of phenotypic data from **BV-BRC**
-2. Download of genomes from **NCBI**
-3. ORF prediction with **Prodigal**
-4. Identification of AMR genes using **RGI (CARD)**
-5. Genomic quality control
-6. Construction of resistome binary matrix
-7. Exploratory analysis (PCA)
-8. MLST lineage typing
-9. Detection of chromosomal resistance mutations
-10. Machine learning models
-11. Model evaluation
-
-## Project Structure
+2. Genome metadata integration and assembly mapping
+3. Genome quality filtering
+4. Genome download from **NCBI**
+5. ORF prediction with **Prodigal**
+6. Identification of AMR genes using **RGI (CARD)**
+7. Construction of resistome presence/absence matrix
+8. Exploratory resistome analysis (PCA / clustering)
+9. AMR gene frequency analysis
+10. Resistome heatmap visualization
+11. Principal Coordinate Analysis (PCoA)
+12. Molecular typing and lineage analysis (MLST)
+13. Machine learning models for resistance prediction
+14. Model evaluation
 
 ## Project Structure
 
