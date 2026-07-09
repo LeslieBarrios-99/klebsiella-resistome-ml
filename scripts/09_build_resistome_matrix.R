@@ -1,51 +1,51 @@
 # =========================================================
-# 05_build_resistome_matrix.R
-# Construcción de matriz binaria de resistoma a partir de RGI 
+# 09_build_resistome_matrix.R
+# Construction of a binary resistome matrix from RGI 
 # =========================================================
 
 library(tidyverse)
 library(stringr)
 
 # ---------------------------------------------------------
-# 1. Definir rutas del proyecto
+# Project pathways
 # ---------------------------------------------------------
 
 rgi_path <- "results/rgi/rgi_results"
-qc_path <- "results/qc/quality_control/genomes_valid.txt"
+qc_file <- "results/qc/quality_control/genomes_valid.txt"
 output_path <- "data/processed"
 
-# Crear carpeta de salida
+# Define output
 dir.create(output_path, showWarnings = FALSE, recursive = TRUE)
 
 # --------------------------------------------------------
-# 2. Listar archivos RGI .txt
+# List RGI .txt files
 # --------------------------------------------------------
 
 rgi_files <- list.files(rgi_path, 
                         pattern = "\\.txt$", 
                         full.names = TRUE)
 
-cat("Número de archivos RGI encontrados:", length(rgi_files), "\n")
+cat("Number of RGI files:", length(rgi_files), "\n")
 
 # --------------------------------------------------------
-# 3. Función para leer cada archivo RGI
+# Función para leer cada archivo RGI
 # --------------------------------------------------------
-# - Extrae Assembly ID desde el nombre del archivo
-# - Conserva únicamente el gen detectado (Best_Hit_ARO)
-# - Devuelve tabla larga Genome–Gene
+# - Extracts Assembly ID from the filename
+# - Retains only the detected gene (Best_Hit_ARO)
+# - Returns a long-format Genome–Gene table
 
 read_rgi_file <- function(file) {
   
   df <- read.delim(file, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
   
-  # Extraer Assembly ID (GCA_XXXXXX.X o GCF_XXXXXX.X)
+  # Extract Assembly ID (GCA_XXXXXX.X o GCF_XXXXXX.X)
   genome_id <- str_extract(basename(file), "G(CA|CF)_\\d+\\.\\d+")
   
-  # Si no hay hits, devolver NULL
+  # If there are no hits, return NULL
   if (nrow(df) == 0) return(NULL)
   
   df %>%
-    select(ARO, Best_Hit_ARO) %>%
+    select(Best_Hit_ARO) %>%
     mutate(
       Genome = genome_id,
       Gene = Best_Hit_ARO
@@ -54,25 +54,25 @@ read_rgi_file <- function(file) {
 }
 
 # ---------------------------------------------------------
-# 4. Leer todos los archivos y construir tabla larga
+# Read all files and build a long table
 # ---------------------------------------------------------
 
 resistome_long <- map_dfr(rgi_files, read_rgi_file)
 
-cat("Total detecciones AMR:", nrow(resistome_long), "\n")
+cat("Total AMR detections:", nrow(resistome_long), "\n")
 
 # ---------------------------------------------------------
-# 5. Limpieza: eliminar posibles NA en Genome
+# Cleaning: remove potential NAs in Genome
 # ---------------------------------------------------------
 
 resistome_long <- resistome_long %>%
   filter(!is.na(Genome))
 
-cat("Genomas únicos con al menos 1 gen detectado:",
+cat("Genomes with AMR:",
     length(unique(resistome_long$Genome)), "\n")
 
 # --------------------------------------------------------
-# 6. Construcción de matriz binaria (presencia/ausencia)
+# Build binary presence/absence resistome matrix
 # --------------------------------------------------------
 
 resistome_matrix <- resistome_long %>%
@@ -84,27 +84,27 @@ resistome_matrix <- resistome_long %>%
     values_fill = 0
   )
 
-cat("Dimensiones matriz sin filtrar QC:", dim(resistome_matrix), "\n")
+cat("Matrix dimensions before QC filtering:", dim(resistome_matrix), "\n")
 
 # ---------------------------------------------------------
-# 7. Filtrar por control de calidad (QC)
+# Filter by Quality Control (QC)
 # ---------------------------------------------------------
 
 qc_genomes <- readLines(qc_path)
 
-# Extraer Assembly ID desde nombres largos del QC
+# Extract Assembly ID from long QC names
 qc_assembly <- str_extract(qc_genomes,
                            "G(CA|CF)_\\d+\\.\\d+")
 
-# Filtrar matriz
+# Filter matrix
 resistome_matrix_qc <- resistome_matrix %>%
   filter(Genome %in% qc_assembly)
 
-cat("Genomas que pasan QC y tienen genes AMR:",
-    nrow(resistome_matrix_qc), "\n")
+cat("Genomes that pass QC and contain AMR genes
+:", nrow(resistome_matrix_qc), "\n")
 
 # ---------------------------------------------------------
-# 8. Guardar resultados
+# Save results
 # ---------------------------------------------------------
 
 write.table(resistome_long,
@@ -128,12 +128,4 @@ write.table(resistome_matrix_qc,
             quote = FALSE,
             row.names = FALSE)
 
-cat("Matrices guardadas correctamente.\n")
-
-# =========================================================
-# FIN DEL SCRIPT
-# =========================================================
-
-
-matriz_qc <- read.delim("data/processed/resistome_matrix_binary_QC.tsv")
-dim(matriz_qc)
+cat("Matrices saved successfully.\n")

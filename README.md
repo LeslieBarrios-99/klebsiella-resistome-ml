@@ -1,4 +1,4 @@
-# Resistome Analysis and Machine Learning Prediction of Antimicrobial Resistance in *Klebsiella pneumoniae* 
+# Resistome Analysis and Machine Learning Prediction of Antimicrobial Resistance in *Klebsiella pneumoniae*
 
 **Master Thesis – Leslie Barrios**
 
@@ -6,22 +6,24 @@
 
 This repository contains the complete bioinformatic and machine learning workflow developed for the Master's Thesis:
 
-**Prediction of antimicrobial resistance phenotype in Klebsiella pneumoniae using machine learning models   based on genomic data.**
+**Prediction of antimicrobial resistance phenotype in Klebsiella pneumoniae using machine learning models based on genomic data.**
 
 The study integrates antimicrobial susceptibility data, whole-genome assemblies, resistome profiling and molecular typing to predict resistance to carbapenems using supervised machine learning.
 
 ## Objectives:
-- Characterize the resistome of clinical Klebsiella pneumoniae isolates;
-- Identify the frequency and distribution of antimicrobial resistance determinants;
-- Evaluate the global structure of the resistome using multivariate analyses;
-- Assess lineage diversity through MLST;
-- Predict antimicrobial resistance phenotypes using Random Forest and XGBoost models.
+
+- Characterize the resistome of clinical Klebsiella pneumoniae isolates
+- Identify the frequency and distribution of antimicrobial resistance determinants
+- Evaluate the global structure of the resistome using multivariate analyses
+- Assess lineage diversity through MLST
+- Predict antimicrobial resistance phenotypes using Random Forest and XGBoost models
 
 ## Bioinformatic Workflow
 
 ![Pipeline workflow](figures/Pipeline_workflow.png)
 
 ## Workflow Summary
+
 **Data acquisition**
 BV-BRC phenotype database
 Meropenem
@@ -47,8 +49,8 @@ PCoA
 Hierarchical clustering
 
 **Machine Learning**
-Random Forest
 XGBoost
+Random Forest
 
 **Model evaluation**
 ROC
@@ -56,8 +58,7 @@ AUC
 Confusion Matrix
 Feature importance
 
-## Project Structure
-
+## Repository Structure
 ```
 TFM_Leslie/
 │
@@ -85,6 +86,10 @@ To reproduce this analysis see:
 
 - **environment.md** → Conda environment and bioinformatics tools
 - **install_packages.md** → R package installation
+
+## Citation
+
+If you use this repository, please cite the corresponding Master's Thesis.
 
 ## Author
 

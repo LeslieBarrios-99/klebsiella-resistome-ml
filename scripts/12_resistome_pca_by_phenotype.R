@@ -1,5 +1,6 @@
 # =========================================================
-# PCA del resistoma coloreado por fenotipo
+# 12_resistome_pca_by_phenotype.R
+# PCA of the resistome colored by phenotype
 # =========================================================
 
 source("scripts/00_config.R")
@@ -10,7 +11,7 @@ library(tidyverse)
 # Resistome matrix
 # -------------------------------
 
-resistome <- read_tsv("data/processed/resistome_matrix_binary_QC.tsv")
+resistome <- read_tsv("data/processed/resistome_matrix_clean.tsv")
 
 genome_ids <- resistome$Genome
 
@@ -18,20 +19,21 @@ X <- resistome %>%
   select(-Genome)
 
 # -------------------------------
-# Eliminar genes sin variación
+# Remove genes with no variation
 # -------------------------------
 
-X_var <- X[, apply(X, 2, var) != 0]
-
-cat("Genes antes del filtro:", ncol(X), "\n")
-cat("Genes con variación:", ncol(X_var), "\n")
+X_var <- X[, apply(X, 2, var) != 0, drop = FALSE]
+if (ncol(X_var) < 2) {
+  stop("There are not enough variable genes for PCA")
+}
+cat("Genes before the filter:", ncol(X), "\n")
+cat("Genes with variacion:", ncol(X_var), "\n")
 
 # -------------------------------
 # PCA
 # -------------------------------
 
 pca <- prcomp(X_var, scale. = TRUE)
-
 pca_df <- as.data.frame(pca$x)
 pca_df$Genome <- genome_ids
 pca_df$Genome <- as.character(pca_df$Genome)
@@ -39,7 +41,7 @@ pca_df$Genome <- as.character(pca_df$Genome)
 variance <- summary(pca)$importance[2,]
 
 # -------------------------------
-# Cargar metadata con assembly
+# Load metadata with assembly
 # -------------------------------
 
 mer_meta <- read_tsv("data/processed/meropenem_with_assembly.tsv")
@@ -52,21 +54,24 @@ pheno <- bind_rows(mer_meta, imi_meta) %>%
     Phenotype = `Resistant.Phenotype`
   )
 
-# asegurar mismo tipo
+# Ensure same type
 pheno$Genome <- as.character(pheno$Genome)  
 
 # -------------------------------
-# Unir PCA + fenotipo
+# Merge PCA + phenotype
 # -------------------------------
 
 pca_df <- left_join(pca_df, pheno, by = "Genome")
+
+# Remove NAs in phenotype
+pca_df <- pca_df %>% filter(!is.na(Phenotype))
 
 # -------------------------------
 # Plot PCA
 # -------------------------------
 
 p <- ggplot(pca_df, aes(PC1, PC2, color = Phenotype)) +
-  geom_point(size = 2.5, alpha = 0.8) +
+  geom_point(size = 5, alpha = 0.8) +
   theme_classic() +
   labs(
     title = expression(
@@ -77,21 +82,23 @@ p <- ggplot(pca_df, aes(PC1, PC2, color = Phenotype)) +
   ) +
   scale_color_manual(
     values = c(
-      "Resistant" = "#d73027",
-      "Susceptible" = "#4575b4"
-    )
+      "Resistant" = "#D55E00",
+      "Susceptible" = "#0072B2"
+    ),
+    na.translate = FALSE
   ) +
   theme(
     plot.title = element_text(hjust = 0.5, size = 14),
     legend.title = element_text(size = 11),
-    legend.text = element_text(size = 10)
+    legend.text = element_text(size = 10),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.8)
   )
 
-# Mostrar la figura en RStudio
+# Display the figure in RStudio
 
 print (p)
 
-# Guardar en PNG
+# Save figure
 
 ggsave(
   "figures/resistome_pca_by_phenotype.png",

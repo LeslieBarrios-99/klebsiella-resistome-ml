@@ -19,6 +19,7 @@ write_lines(
 )
 
 cat("Meropenem Genome IDs exported\n")
+cat("Genome IDs únicos:", length(unique(mer$Genome.ID)), "\n")
 
 # ---------------------------------
 # IMIPENEM
@@ -32,3 +33,4 @@ write_lines(
 )
 
 cat("Imipenem Genome IDs exported\n")
+cat("Unique Genome IDs:", length(unique(imi$Genome.ID)), "\n")

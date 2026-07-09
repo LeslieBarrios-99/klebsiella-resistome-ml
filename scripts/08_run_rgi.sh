@@ -56,3 +56,7 @@ echo "Finished $base"
 echo "========================================="
 echo "Pipeline finished"
 echo "========================================="
+
+echo "RGI outputs:"
+
+find $RGI_DIR -name "*.txt" | wc -l

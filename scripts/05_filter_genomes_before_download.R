@@ -1,5 +1,5 @@
 # =========================================================
-# Filter genomes before download
+# 5_Filter genomes before download
 # =========================================================
 
 source("scripts/00_config.R")
@@ -10,7 +10,7 @@ mer <- read_tsv("data/processed/meropenem_with_assembly.tsv")
 imi <- read_tsv("data/processed/imipenem_with_assembly.tsv")
 
 # -----------------------------
-# filtros de calidad
+# Quality filters
 # -----------------------------
 
 mer_filtered <- mer %>%
@@ -29,7 +29,9 @@ imi_filtered <- imi %>%
     `Contig N50` > 20000
   )
 
-# guardar resultados
+# ---------------------------
+# Save results
+# ---------------------------
 
 write_tsv(
   mer_filtered,
@@ -41,5 +43,16 @@ write_tsv(
   "data/processed/imipenem_filtered_genomes.tsv"
 )
 
+# ---------------------------
+# Print
+# ---------------------------
+cat("\n===== QC Summary =====\n")
+
+cat("Meropenem genomes before QC:", nrow(mer), "\n")
 cat("Meropenem genomes after QC:", nrow(mer_filtered), "\n")
+cat("Deleted:", nrow(mer)-nrow(mer_filtered), "\n\n")
+
+cat("Imipenem genomes before QC:", nrow(imi), "\n")
 cat("Imipenem genomes after QC:", nrow(imi_filtered), "\n")
+cat("Deleted:", nrow(imi)-nrow(imi_filtered), "\n\n")
+
