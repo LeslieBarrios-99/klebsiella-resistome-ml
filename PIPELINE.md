@@ -1,138 +1,310 @@
-# Analysis Pipeline
+# Bioinformatic Analysis Pipeline
 
-## 1 Phenotype data retrieval
+This document describes the complete bioinformatic workflow developed for the Master's Thesis:
+
+**Prediction of antimicrobial resistance phenotype in *Klebsiella pneumoniae* using machine learning models based on genomic data.**
+
+---
+
+##  1. Phenotype data retrieval
 
 Phenotypic antimicrobial susceptibility data were obtained from the BV-BRC database.
 
 Search criteria:
 
-Organism: Klebsiella pneumoniae
-
-Antibiotics:
-- Meropenem
-- Imipenem
+- Organism: *Klebsiella pneumoniae*
+- Antibiotics:
+  - Meropenem
+  - Imipenem
 
 Filters applied:
 
-- Resistance phenotype: Resistant or Susceptible
-- Evidence: Laboratory method  
-
-Initial dataset size (Meropenem):
-
-- 4328 phenotype records
-- 4269 unique strains
+- Resistant
+- Susceptible
+- Laboratory evidence
 
 Output:
 
-data/raw/meropenem_tablageneral.csv
+```
+data/raw/
+```
+
+Scripts:
+
+```
+01_download_metadata_meropenem.R
+02_download_metadata_imipenem.R
+```
 
 ---
 
-## 2 Genome download
+## 2. Genome ID extraction
 
-scripts/01_download_genomes.sh
+Unique Genome IDs were extracted from each phenotype dataset.
+
+Script:
+
+```
+03_extract_genome_ids.R
+```
 
 Output:
 
+```
+meropenem_genome_ids.txt
+imipenem_genome_ids.txt
+```
+
+---
+
+## 3. Assembly mapping
+
+Genome IDs were mapped to Assembly Accessions using the BV-BRC genome metadata.
+
+Script:
+
+```
+04_map_genome_to_assembly.R
+```
+
+Output:
+
+```
+meropenem_with_assembly.tsv
+imipenem_with_assembly.tsv
+```
+
+---
+
+## 4. Genome quality filtering
+
+Assemblies were filtered according to assembly quality.
+
+Criteria
+
+- Genome size: 5.0–6.5 Mb
+- Contigs < 300
+- N50 > 20,000 bp
+
+Script
+
+```
+05_filter_genomes_before_download.R
+```
+
+---
+
+## 5. Assembly selection
+
+Duplicated assemblies were removed.
+
+When both RefSeq (GCF) and GenBank (GCA) versions were available, RefSeq assemblies were preferentially retained.
+
+Scripts
+
+```
+06_0_prepare_download_list.R
+06_1_merge_download_lists.sh
+```
+
+Output
+
+```
+all_assemblies.txt
+```
+
+---
+
+## 6. Genome download
+
+Genomes were downloaded from NCBI using NCBI Datasets.
+
+Script
+
+```
+07_download_genomes.sh
+```
+
+Output
+
+```
 data/raw/genomes/
+```
 
 ---
 
-## 3 ORF prediction
+## 7. ORF prediction and AMR detection
 
-scripts/02_predict_orfs_prodigal.sh
+Protein coding sequences were predicted using Prodigal.
+AMR determinants were identified using:
 
-Tool: Prodigal
+- RGI
+- CARD database
+- DIAMOND
 
-Output:
+Script
 
-data/raw/proteins/
+```
+08_run_rgi.sh
+```
 
----
+Output
 
-## 4 AMR gene identification
-
-scripts/03_run_rgi.sh
-
-Tool: RGI (CARD database)
-
-Output:
-
+```
 results/rgi/
+```
 
 ---
 
-## 5 Genome quality control
+## 8. Resistome construction
 
-scripts/04_quality_control_genomes.sh
+A binary presence/absence resistome matrix was generated from the RGI output.
 
-Criteria:
+Script
 
-Genome size: 5–6.5 Mb  
-Contigs < 300  
-N50 > 20000
-
-Output:
-
-results/qc/genomes_valid.txt
+```
+09_build_resistome_matrix.R
+```
 
 ---
 
-## 6 Resistome matrix construction
+## 9. Resistome curation
 
-scripts/05_build_resistome_matrix.R
+Gene annotations were harmonized.
+Duplicated annotations were merged.
+Invariant genes were removed.
 
-Output:
+Script
 
-data/processed/resistome_matrix_binary_QC.tsv
+```
+10_clean_resistome_matrix.R
+```
 
----
+Output
 
-## 7 Exploratory analysis
-
-scripts/06_resistome_exploration.R
-
-Methods:
-
-PCA  
-Clustering  
-Heatmaps
+```
+resistome_matrix_clean.tsv
+```
 
 ---
 
-## 8 MLST typing
+## 10. Exploratory resistome analysis
 
-scripts/07_mlst_typing.sh
+Scripts
+
+```
+11_resistome_pca_global.R
+12_resistome_pca_by_phenotype.R
+13_resistome_amr_gene_freq.R
+14_resistome_pcoa.R
+15_resistome_heatmap_clustering.R
+```
+
+Analyses
+
+- Global PCA
+- PCA by phenotype
+- AMR gene frequency
+- PCoA
+- Hierarchical clustering
+- Heatmap
 
 ---
 
-## 9 Chromosomal mutations
+## 11. MLST typing
 
-scripts/08_detect_chromosomal_mutations.R
+Scripts
 
-Targets:
+```
+16_0_mlst_typing.sh
+16_1_mlst_frequency.R
+```
 
-ompK35  
-ompK36  
-mgrB
+Output
+
+- Sequence Types
+- MLST frequency distribution
 
 ---
 
-## 10 Machine learning models
+## 12. Machine Learning dataset preparation
 
-scripts/10_ml_models_meropenem.R  
-scripts/10_ml_models_imipenem.R
+Phenotype + Curated resistome + MLST -> Final datasets
 
-Models:
+Scripts
 
-- Random Forest  
+```
+17_prepare_ml_dataset.R
+```
+
+Outputs
+
+```
+ml_dataset_meropenem.tsv
+ml_dataset_imipenem.tsv
+```
+
+---
+
+## 13. Machine Learning
+
+Independent models were developed for each carbapenem.
+
+Scripts
+
+```
+18_ml_models_meropenem.R
+19_ml_models_imipenem.R
+```
+
+Algorithms
+
+- Random Forest
 - XGBoost
-- Logistic Regression
-
-Model training and tuning were performed using the `caret` framework
 
 ---
 
-## 11 Model evaluation
+## 14. Model evaluation
 
-scripts/11_model_evaluation.R
+Script
+
+```
+20_model_evaluation.R
+```
+
+Evaluation metrics
+
+- Confusion Matrix
+- ROC
+- AUC
+- Precision
+- Recall
+- F1-score
+- MCC
+- Feature importance
+
+---
+
+## Reproducibility
+
+All scripts were designed to be executed sequentially.
+
+The recommended execution order is:
+
+```
+01
+↓
+
+02
+↓
+
+03
+
+...
+
+↓
+
+20
+```
+
+Following this order reproduces the complete bioinformatic workflow from raw phenotype data to machine learning model evaluation.
