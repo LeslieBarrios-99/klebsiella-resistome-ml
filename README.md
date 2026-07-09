@@ -1,42 +1,60 @@
-# Resistome Analysis of *Klebsiella pneumoniae* Associated with Carbapenem Resistance
+# Resistome Analysis and Machine Learning Prediction of Antimicrobial Resistance in *Klebsiella pneumoniae* 
 
 **Master Thesis – Leslie Barrios**
 
 ## Overview
 
-This project investigates the genomic determinants associated with resistance to carbapenems in *Klebsiella pneumoniae*, focusing on two clinically relevant antibiotics:
+This repository contains the complete bioinformatic and machine learning workflow developed for the Master's Thesis:
 
-- **Meropenem**
-- **Imipenem**
+**Prediction of antimicrobial resistance phenotype in Klebsiella pneumoniae using machine learning models   based on genomic data.**
 
-The study integrates:
+The study integrates antimicrobial susceptibility data, whole-genome assemblies, resistome profiling and molecular typing to predict resistance to carbapenems using supervised machine learning.
 
-- Phenotypic antimicrobial susceptibility data
-- Whole genome sequences
-- Resistome profiles inferred using the **CARD database**
-
-Machine learning models are used to evaluate the predictive capacity of genomic resistance determinants for antimicrobial resistance phenotypes.
+## Objectives:
+- Characterize the resistome of clinical Klebsiella pneumoniae isolates;
+- Identify the frequency and distribution of antimicrobial resistance determinants;
+- Evaluate the global structure of the resistome using multivariate analyses;
+- Assess lineage diversity through MLST;
+- Predict antimicrobial resistance phenotypes using Random Forest and XGBoost models.
 
 ## Bioinformatic Workflow
 
 ![Pipeline workflow](figures/Pipeline_workflow.png)
 
-## Pipeline Overview
+## Workflow Summary
+**Data acquisition**
+BV-BRC phenotype database
+Meropenem
+Imipenem
 
-1. Retrieval of phenotypic data from **BV-BRC**
-2. Genome metadata integration and assembly mapping
-3. Genome quality filtering
-4. Genome download from **NCBI**
-5. ORF prediction with **Prodigal**
-6. Identification of AMR genes using **RGI (CARD)**
-7. Construction of resistome presence/absence matrix
-8. Exploratory resistome analysis (PCA / clustering)
-9. AMR gene frequency analysis
-10. Resistome heatmap visualization
-11. Principal Coordinate Analysis (PCoA)
-12. Molecular typing and lineage analysis (MLST)
-13. Machine learning models for resistance prediction
-14. Model evaluation
+**Genome processing**
+Assembly mapping
+Quality filtering
+Genome download (NCBI Datasets)
+
+**Bioinformatic analysis**
+ORF prediction (Prodigal)
+AMR gene detection (RGI + CARD)
+Resistome construction
+Resistome curation
+MLST typing
+
+**Exploratory analyses**
+AMR gene frequency
+Global PCA
+PCA by phenotype
+PCoA
+Hierarchical clustering
+
+**Machine Learning**
+Random Forest
+XGBoost
+
+**Model evaluation**
+ROC
+AUC
+Confusion Matrix
+Feature importance
 
 ## Project Structure
 
@@ -45,7 +63,6 @@ TFM_Leslie/
 │
 ├── scripts/        # Reproducible analysis scripts
 ├── data/           # Raw and processed datasets
-├── databases/      # AMR reference databases
 ├── results/        # Analysis outputs
 ├── figures/        # Figures generated for the thesis
 │
@@ -59,9 +76,7 @@ TFM_Leslie/
 
 All analyses were performed using a reproducible bioinformatic pipeline available in the **scripts/** directory.
 
-The complete workflow is described in:
-
-**PIPELINE.md**
+The complete workflow is described in **PIPELINE.md**
 
 
 ## Environment
@@ -74,4 +89,4 @@ To reproduce this analysis see:
 ## Author
 
 **Leslie Barrios**  
-Master's Program in Bioinformatics
+Master's Degree in Bioinformatics
