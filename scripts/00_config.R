@@ -1,11 +1,11 @@
 # =========================================================
 # 00_config.R
-# Configuración global del proyecto
+# Global project configuration
 # =========================================================
 
-# =========================
-# Librerías
-# =========================
+# ========================================================
+# Libraries
+# ========================================================
 
 library(tidyverse)
 library(data.table)
@@ -21,15 +21,15 @@ library(themis)
 
 library(reshape2)
 
-# =========================
-# Directorio del proyecto
-# =========================
+# ========================================================
+# Project directory
+# ========================================================
 
-project_dir <- "~/Bioinformatica/TFM_Leslie"
+project_dir <- getwd()
 
-# =========================
-# Rutas
-# =========================
+# ========================================================
+# Paths
+# ========================================================
 
 data_dir <- file.path(project_dir, "data")
 
@@ -40,16 +40,40 @@ genomes_dir <- file.path(raw_dir, "genomes")
 proteins_dir <- file.path(raw_dir, "proteins")
 
 results_dir <- file.path(project_dir, "results")
-figures_dir <- file.path(project_dir, "figures")
 
 rgi_dir <- file.path(results_dir, "rgi")
 qc_dir <- file.path(results_dir, "qc")
-models_dir <- file.path(results_dir, "models")
 
-# =========================
-# Opciones R
-# =========================
+resistome_dir <- file.path(results_dir, "resistome")
+mlst_dir      <- file.path(results_dir, "mlst")
+
+ml_dir <- file.path(results_dir, "machine_learning")
+ml_models_dir  <- file.path(ml_dir, "models")
+ml_tables_dir  <- file.path(ml_dir, "tables")
+ml_figures_dir <- file.path(ml_dir, "figures")
+
+
+#========================================================
+# Create output directories
+# ========================================================
+
+dir.create(results_dir, recursive = TRUE, showWarnings = FALSE)
+
+dir.create(rgi_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(qc_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(resistome_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(mlst_dir, recursive = TRUE, showWarnings = FALSE)
+
+dir.create(ml_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(ml_models_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(ml_tables_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(ml_figures_dir, recursive = TRUE, showWarnings = FALSE)
+
+
+# ========================================================
+# R options
+# ========================================================
 
 options(stringsAsFactors = FALSE)
 
-message("Configuración del proyecto cargada correctamente")
+message("Project configuration loaded successfully.")

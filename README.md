@@ -12,7 +12,7 @@ The study integrates antimicrobial susceptibility data, whole-genome assemblies,
 
 ## Objectives:
 
-- Characterize the resistome of clinical Klebsiella pneumoniae isolates
+- Characterize the resistome of clinical Klebsiella pneumoniae genomes
 - Identify the frequency and distribution of antimicrobial resistance determinants
 - Evaluate the global structure of the resistome using multivariate analyses
 - Assess lineage diversity through MLST
@@ -25,38 +25,38 @@ The study integrates antimicrobial susceptibility data, whole-genome assemblies,
 ## Workflow Summary
 
 **Data acquisition**
-BV-BRC phenotype database
-Meropenem
-Imipenem
+- BV-BRC phenotype database
+- Meropenem
+- Imipenem
 
 **Genome processing**
-Assembly mapping
-Quality filtering
-Genome download (NCBI Datasets)
+- Assembly mapping
+- Quality filtering
+- Genome download (NCBI Datasets)
 
 **Bioinformatic analysis**
-ORF prediction (Prodigal)
-AMR gene detection (RGI + CARD)
-Resistome construction
-Resistome curation
-MLST typing
+- ORF prediction (Prodigal)
+- AMR gene detection (RGI + CARD)
+- Resistome construction
+- Resistome curation
+- MLST typing
 
 **Exploratory analyses**
-AMR gene frequency
-Global PCA
-PCA by phenotype
-PCoA
-Hierarchical clustering
+- AMR gene frequency
+- Global PCA
+- PCA by phenotype
+- PCoA
+- Hierarchical clustering
 
 **Machine Learning**
-XGBoost
-Random Forest
+- XGBoost
+- Random Forest
 
 **Model evaluation**
-ROC
-AUC
-Confusion Matrix
-Feature importance
+- ROC
+- AUC
+- Confusion Matrix
+- Feature importance
 
 ## Repository Structure
 ```
@@ -65,7 +65,7 @@ TFM_Leslie/
 ├── scripts/        # Reproducible analysis scripts
 ├── data/           # Raw and processed datasets
 ├── results/        # Analysis outputs
-├── figures/        # Figures generated for the thesis
+├── figures/        # Workflow and documentation figures
 │
 ├── README.md
 ├── PIPELINE.md

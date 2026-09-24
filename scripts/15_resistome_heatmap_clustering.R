@@ -35,7 +35,7 @@ pheatmap(
   fontsize_row = 6,
   border_color = NA,
   main = expression("Hierarchical clustering of resistome profiles of "*italic(Klebsiella~pneumoniae)),
-  filename = "figures/resistome_heatmap.png",
+  filename = file.path(resistome_dir, "resistome_heatmap.png"),
   width = 8,
   height = 10
 )

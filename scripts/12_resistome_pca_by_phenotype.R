@@ -101,7 +101,7 @@ print (p)
 # Save figure
 
 ggsave(
-  "figures/resistome_pca_by_phenotype.png",
+  file.path(resistome_dir, "resistome_pca_by_phenotype.png"),
   p,
   width = 10,
   height = 6,

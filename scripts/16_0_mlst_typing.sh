@@ -6,7 +6,7 @@ set -e
 # =========================================================
 
 GENOMES="data/raw/genomes/*.fna"
-OUTPUT="results/mlst_results.tsv"
+OUTPUT="results/mlst/mlst_results.tsv"
 
 mkdir -p results
 

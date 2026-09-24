@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # =========================================================
-# Download genomes from NCBI using assembly accessions
+# 07_download_genomes
+#Download genomes from NCBI using assembly accessions
 # =========================================================
 
 ASSEMBLY_LIST="data/processed/all_assemblies.txt"

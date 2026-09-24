@@ -17,7 +17,7 @@ library(stringr)
 resistome_file <- "data/processed/resistome_matrix_clean.tsv"
 meropenem_file <- "data/processed/meropenem_with_assembly.tsv"
 imipenem_file <- "data/processed/imipenem_with_assembly.tsv"
-mlst_file <- "results/mlst_results.tsv"
+mlst_file <- "results/mlst/mlst_results.tsv"
 output_dir <- "data/processed"
 
 # =========================================================
@@ -179,6 +179,18 @@ print(table(mer_dataset$Phenotype))
 
 cat("\nImipenem phenotype distribution\n")
 print(table(imi_dataset$Phenotype))
+
+cat("\n========== DATASET SUMMARY ==========\n")
+
+cat("\nMeropenem\n")
+cat("Genomes:", nrow(mer_dataset), "\n")
+cat("Predictive variables:", ncol(mer_dataset)-3, "\n") # Genome, Phenotype y ST
+cat("Sequence Types:", length(unique(mer_dataset$ST)), "\n")
+
+cat("\nImipenem\n")
+cat("Genomes:", nrow(imi_dataset), "\n")
+cat("Predictive variables:", ncol(imi_dataset)-3, "\n")
+cat("Sequence Types:", length(unique(imi_dataset$ST)), "\n")
 
 cat("\n=====================================\n")
 cat("Machine Learning datasets successfully generated\n")

@@ -63,7 +63,7 @@ print(p)
 
 # Save figure
 ggsave(
-  "figures/resistome_amr_gene_frequency.png",
+  file.path(resistome_dir, "resistome_amr_gene_frequency.png"),
   p,
   width = 10,
   height = 6,

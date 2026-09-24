@@ -79,7 +79,7 @@ print(p)
 # Save figure
 # ==========================================================
 ggsave(
-  "figures/resistome_global_pca.png",
+  file.path(resistome_dir, "resistome_global_pca.png"),
   p,
   width = 8,
   height = 6,

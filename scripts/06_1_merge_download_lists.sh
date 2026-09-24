@@ -1,5 +1,5 @@
 # =========================================================
-# Merge assembly lists and remove duplicates
+# 06_1_Merge assembly lists and remove duplicates
 # Prefer unique assemblies before download
 # =========================================================
 

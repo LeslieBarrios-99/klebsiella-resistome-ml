@@ -1,5 +1,5 @@
 # =========================================================
-# Prepare assembly list for genome download
+# 06_0_Prepare assembly list for genome download
 # Prefer RefSeq (GCF) over GenBank (GCA)
 # =========================================================
 

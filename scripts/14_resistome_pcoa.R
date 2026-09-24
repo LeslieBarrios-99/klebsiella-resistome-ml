@@ -69,7 +69,7 @@ p <- ggplot(pcoa_counts, aes(Axis1, Axis2)) +
 print(p)
 
 ggsave(
-  "figures/resistome_PCoA.png",
+  file.path(resistome_dir, "resistome_PCoA.png"),
   p,
   width = 8,
   height = 6,

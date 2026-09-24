@@ -1,6 +1,6 @@
 # =========================================================
 # 16_1_mlst_frequency.R
-# Frecuencia de Sequence Types (MLST)
+# Sequence Types Frequency (MLST)
 # =========================================================
 
 source("scripts/00_config.R")
@@ -9,11 +9,11 @@ library(tidyverse)
 library(forcats)
 
 # ---------------------------------------------------------
-# Leer resultados MLST
+# Read MLST results
 # ---------------------------------------------------------
 
 mlst <- read_tsv(
-  "results/mlst_results.tsv",
+  "results/mlst/mlst_results.tsv",
   col_names = FALSE,
   show_col_types = FALSE
 )
@@ -32,28 +32,61 @@ colnames(mlst) <- c(
 )
 
 # ---------------------------------------------------------
-# Frecuencia de ST
+# Extract Assembly Accession from MLST file paths
 # ---------------------------------------------------------
 
-st_freq <- mlst %>%
+mlst <- mlst %>%
+  mutate(
+    Genome = str_extract(
+      Genome,
+      "G(CA|CF)_\\d+\\.\\d+"
+    )
+  )
+
+# ---------------------------------------------------------
+# Filter MLST results according to the final resistome
+# collection
+# ---------------------------------------------------------
+
+final_genomes <- read_tsv(
+  "data/processed/resistome_matrix_clean.tsv",
+  show_col_types = FALSE
+) %>%
+  select(Genome) %>%
+  distinct()
+
+mlst_final <- mlst %>%
+  inner_join(
+    final_genomes,
+    by = "Genome"
+  )
+cat("Final collection genomes:", nrow(final_genomes), "\n")
+cat("Genomes with MLST results:", sum(mlst_final$ST != "-"), "\n")
+cat("Distinct STs:", n_distinct(mlst_final$ST[mlst_final$ST != "-"]), "\n")
+
+# ---------------------------------------------------------
+# ST frequency
+# ---------------------------------------------------------
+
+st_freq <- mlst_final %>%
   filter(ST != "-") %>%
   count(ST, sort = TRUE)
 
-# Número total de STs
-cat("Número total de STs:", n_distinct(st_freq$ST), "\n")
+# Total number of STs
+cat("Total number of STs:", n_distinct(st_freq$ST), "\n")
 
 # Top 15 STs
 st_top <- st_freq %>%
   slice_max(n, n = 15)
 
-# Porcentaje
+# Percentage
 st_top <- st_top %>%
   mutate(
     Percent = round(n / sum(st_freq$n) * 100, 1)
   )
 
 # ---------------------------------------------------------
-# Orden para gráfico
+# Chart order
 # ---------------------------------------------------------
 
 st_top <- st_top %>%
@@ -116,7 +149,7 @@ p <- ggplot(
 print(p)
 
 ggsave(
-  "figures/mlst_frequency.png",
+  "results/resistome/mlst_frequency.png",
   p,
   width = 8,
   height = 6,

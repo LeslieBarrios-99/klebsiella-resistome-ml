@@ -1,5 +1,6 @@
 # =========================================================
-# Extract Genome IDs from phenotype datasets
+# 03_Extract Genome IDs
+# Extract genome IDs from phenotype datasets
 # =========================================================
 
 source("scripts/00_config.R")

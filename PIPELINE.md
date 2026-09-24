@@ -23,10 +23,11 @@ Filters applied:
 - Susceptible
 - Laboratory evidence
 
-Output:
+Outputs:
 
 ```
 data/raw/
+data/processed/
 ```
 
 Scripts:
@@ -40,7 +41,7 @@ Scripts:
 
 ## 2. Genome ID extraction
 
-Unique Genome IDs were extracted from each phenotype dataset.
+Unique Genome IDs were extracted from the curated phenotype datasets.
 
 Script:
 
@@ -48,11 +49,11 @@ Script:
 03_extract_genome_ids.R
 ```
 
-Output:
+Outputs:
 
 ```
-meropenem_genome_ids.txt
-imipenem_genome_ids.txt
+data/processed/meropenem_genome_ids.txt
+data/processed/imipenem_genome_ids.txt
 ```
 
 ---
@@ -67,31 +68,37 @@ Script:
 04_map_genome_to_assembly.R
 ```
 
-Output:
+Outputs:
 
 ```
-meropenem_with_assembly.tsv
-imipenem_with_assembly.tsv
+data/processed/meropenem_with_assembly.tsv
+data/processed/imipenem_with_assembly.tsv
 ```
 
 ---
 
 ## 4. Genome quality filtering
 
-Assemblies were filtered according to assembly quality.
+Assemblies were filtered according to predefined assembly quality criteria.
 
-Criteria
+Criteria:
 
 - Genome size: 5.0–6.5 Mb
 - Contigs < 300
 - N50 > 20,000 bp
 
-Script
+Script:
 
 ```
 05_filter_genomes_before_download.R
 ```
 
+Outputs:
+
+```
+data/processed/meropenem_filtered_genomes.tsv
+data/processed/imipenem_filtered_genomes.tsv
+```
 ---
 
 ## 5. Assembly selection
@@ -100,17 +107,19 @@ Duplicated assemblies were removed.
 
 When both RefSeq (GCF) and GenBank (GCA) versions were available, RefSeq assemblies were preferentially retained.
 
-Scripts
+Scripts:
 
 ```
 06_0_prepare_download_list.R
 06_1_merge_download_lists.sh
 ```
 
-Output
+Outputs:
 
 ```
-all_assemblies.txt
+data/processed/meropenem_assembly_list.txt
+data/processed/imipenem_assembly_list.txt
+data/processed/all_assemblies.txt
 ```
 
 ---
@@ -119,13 +128,13 @@ all_assemblies.txt
 
 Genomes were downloaded from NCBI using NCBI Datasets.
 
-Script
+Script:
 
 ```
 07_download_genomes.sh
 ```
 
-Output
+Output:
 
 ```
 data/raw/genomes/
@@ -142,16 +151,17 @@ AMR determinants were identified using:
 - CARD database
 - DIAMOND
 
-Script
+Script:
 
 ```
 08_run_rgi.sh
 ```
 
-Output
+Output:
 
 ```
-results/rgi/
+data/raw/proteins/
+results/rgi/rgi_results/
 ```
 
 ---
@@ -160,10 +170,15 @@ results/rgi/
 
 A binary presence/absence resistome matrix was generated from the RGI output.
 
-Script
+Script:
 
 ```
 09_build_resistome_matrix.R
+```
+Output:
+
+```
+data/processed/resistome_matrix_binary_QC.tsv
 ```
 
 ---
@@ -174,23 +189,25 @@ Gene annotations were harmonized.
 Duplicated annotations were merged.
 Invariant genes were removed.
 
-Script
+Script:
 
 ```
 10_clean_resistome_matrix.R
 ```
 
-Output
+Output:
 
 ```
-resistome_matrix_clean.tsv
+data/processed/resistome_matrix_clean.tsv
 ```
 
 ---
 
 ## 10. Exploratory resistome analysis
 
-Scripts
+The curated resistome matrix was used for exploratory multivariate and clustering analyses.
+
+Scripts:
 
 ```
 11_resistome_pca_global.R
@@ -200,48 +217,55 @@ Scripts
 15_resistome_heatmap_clustering.R
 ```
 
-Analyses
+Outputs:
+```
+results/resistome/
+```
 
-- Global PCA
-- PCA by phenotype
-- AMR gene frequency
-- PCoA
-- Hierarchical clustering
-- Heatmap
+Main figures generated:
 
+```
+results/resistome/resistome_global_pca.png
+results/resistome/resistome_pca_by_phenotype.png
+results/resistome/resistome_amr_gene_frequency.png
+results/resistome/resistome_PCoA.png
+results/resistome/resistome_heatmap.png
+```
 ---
 
 ## 11. MLST typing
 
-Scripts
+Multilocus sequence typing was performed on the genome collection.
+
+Scripts:
 
 ```
 16_0_mlst_typing.sh
 16_1_mlst_frequency.R
 ```
 
-Output
-
-- Sequence Types
-- MLST frequency distribution
-
+Outputs:
+```
+results/mlst/mlst_results.tsv
+results/resistome/mlst_frequency.png
+``
 ---
 
 ## 12. Machine Learning dataset preparation
 
-Phenotype + Curated resistome + MLST -> Final datasets
+Phenotypic data and the curated resistome matrix were integrated to generate the datasets used for Machine Learning.
 
-Scripts
+Scripts:
 
 ```
 17_prepare_ml_dataset.R
 ```
 
-Outputs
+Outputs:
 
 ```
-ml_dataset_meropenem.tsv
-ml_dataset_imipenem.tsv
+data/processed/ml_dataset_meropenem.tsv
+data/processed/ml_dataset_imipenem.tsv
 ```
 
 ---
@@ -250,38 +274,64 @@ ml_dataset_imipenem.tsv
 
 Independent models were developed for each carbapenem.
 
-Scripts
+Scripts:
 
 ```
 18_ml_models_meropenem.R
 19_ml_models_imipenem.R
 ```
 
-Algorithms
+Algorithms:
 
 - Random Forest
 - XGBoost
+
+Model outputs:
+```
+results/machine_learning/models/
+```
+
+The directory contains trained models, model metrics, predictions and ROC objects forboth carbapenems.
 
 ---
 
 ## 14. Model evaluation
 
-Script
+The trained models were evaluated using the saved model objects, predictions and ROC data.
+
+Script:
 
 ```
 20_model_evaluation.R
 ```
 
-Evaluation metrics
+Evaluation metrics:
 
 - Confusion Matrix
-- ROC
-- AUC
+- Accuracy
+- Balanced Accuracy
+- Sensitivity
+- Specificity
 - Precision
-- Recall
 - F1-score
-- MCC
+- Kappa
+- ROC AUC
 - Feature importance
+
+Outputs:
+```
+results/machine_learning/tables/model_performance.tsv
+results/machine_learning/figures/
+```
+
+Main figures generated:
+```
+results/machine_learning/figures/roc_curves.png
+results/machine_learning/figures/rf_variable_importance_meropenem.png
+results/machine_learning/figures/rf_variable_importance_imipenem.png
+results/machine_learning/figures/xgb_variable_importance_meropenem.png
+results/machine_learning/figures/xgb_variable_importance_imipenem.png
+```
 
 ---
 
@@ -307,4 +357,7 @@ The recommended execution order is:
 20
 ```
 
-Following this order reproduces the complete bioinformatic workflow from raw phenotype data to machine learning model evaluation.
+Following this order reproduces the complete bioinformatic workflow from phenotype data processing through resistome characterization, MLST typing, Machine Learning modeldevelopment and model evaluation.
+```
+The repository excludes raw and processed datasets, analysis results and local databases from version control. Software requirements and installation instructions are provided in environment.md and install_packages.md.
+```
